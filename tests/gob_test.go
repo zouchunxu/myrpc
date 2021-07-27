@@ -23,6 +23,7 @@ func TestGobT(t *testing.T) {
 		H: "hh",
 	}
 	_ = w.Encode(d)
+	fmt.Println(string(b.Bytes()))
 	var x int
 	var dd demo
 	_ = r.Decode(&x)
