@@ -26,18 +26,18 @@ func (f Foo) Sleep(args Args, reply *int) error {
 func main() {
 	go func() {
 		var f Foo
-		l, _ := net.Listen("tcp", ":9292")
+		l, _ := net.Listen("tcp", "127.0.0.1:9292")
 		myrpc.Register(&f)
 		myrpc.Accept(l)
 	}()
 	time.Sleep(time.Second * 2)
-	c, _ := myrpc.Dial("tcp", ":9292")
+	c, _ := myrpc.Dial("tcp", "127.0.0.1:9292")
 
 	var ret int
 	args := &Args{
 		Num1: 1,
 		Num2: 1,
 	}
-	_ = c.Call(context.Background(), "Foo.sum", args, &ret)
+	_ = c.Call(context.Background(), "Foo.Sum", args, &ret)
 	fmt.Println(ret)
 }
