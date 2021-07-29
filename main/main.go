@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"myrpc"
 	"net"
+	"net/http"
 	"time"
 )
 
@@ -40,4 +41,9 @@ func main() {
 	}
 	_ = c.Call(context.Background(), "Foo.Sum", args, &ret)
 	fmt.Println(ret)
+
+	l, _ := net.Listen("tcp", "127.0.0.1:9293")
+	myrpc.HandleHTTP()
+
+	http.Serve(l, nil)
 }

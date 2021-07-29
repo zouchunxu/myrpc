@@ -1,11 +1,13 @@
 package myrpc
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"go/ast"
 	"io"
+	"io/ioutil"
 	"log"
 	"myrpc/codec"
 	"net"
@@ -344,6 +346,22 @@ func HandleHTTP() {
 // It is still necessary to invoke http.Serve(), typically in a go statement.
 func (server *Server) HandleHTTP() {
 	http.Handle(defaultRPCPath, server)
+	http.HandleFunc("/rpc", func(writer http.ResponseWriter, r *http.Request) {
+		c, _ := Dial("tcp", "127.0.0.1:9292")
+		var m struct {
+			ServiceMethod string
+			Args          interface{}
+		}
+		b, _ := ioutil.ReadAll(r.Body)
+		_ = json.Unmarshal(b, &m)
+		var ret interface{}
+		fmt.Println(m)
+		err := c.Call(context.Background(), m.ServiceMethod, m.Args, ret)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+	})
 	http.Handle(defaultDebugPath, debugHTTP{server})
 	log.Println("rpc server debug path:", defaultDebugPath)
 }
