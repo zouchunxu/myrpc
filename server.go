@@ -350,7 +350,7 @@ func (server *Server) HandleHTTP() {
 		c, _ := Dial("tcp", "127.0.0.1:9292")
 		var m struct {
 			ServiceMethod string
-			Args          interface{}
+			Args          string
 		}
 		b, _ := ioutil.ReadAll(r.Body)
 		_ = json.Unmarshal(b, &m)

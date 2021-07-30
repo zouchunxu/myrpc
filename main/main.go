@@ -6,6 +6,7 @@ import (
 	"myrpc"
 	"net"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -21,6 +22,13 @@ func (f Foo) Sum(args Args, reply *int) error {
 func (f Foo) Sleep(args Args, reply *int) error {
 	time.Sleep(time.Second * time.Duration(args.Num1))
 	*reply = args.Num1 + args.Num2
+	return nil
+}
+
+func (f Foo) Say(args string, reply *int) error {
+	reply = new(int)
+	t, _ := strconv.Atoi(args)
+	reply = &t
 	return nil
 }
 
