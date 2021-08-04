@@ -25,6 +25,9 @@ func (Zcx) SayDemo(s string) int {
 func TestConn(t *testing.T) {
 	ch := make(chan struct{})
 	//server
+	mp := sync.Map{}
+	z := &Zcx{}
+	mp.Store(reflect.ValueOf(z).Type().String(), z)
 
 	wg := sync.WaitGroup{}
 	wg.Add(1)
@@ -38,10 +41,12 @@ func TestConn(t *testing.T) {
 		decoder.Decode(&sh)
 		fmt.Printf("h: %+v\n", sh)
 
-		z := &Zcx{}
-
 		var in []reflect.Value
 		in = append(in, reflect.ValueOf(sh.Args))
+		z, ok := mp.Load(sh.ServiceName)
+		if !ok {
+			return
+		}
 		reflect.ValueOf(z).MethodByName("SayDemo").Call(in)
 		fmt.Println(reflect.ValueOf(z).MethodByName("SayDemo").Type().In(0).Name())
 	}()
@@ -53,8 +58,8 @@ func TestConn(t *testing.T) {
 		return
 	}
 	h := Header{
-		ServiceName: "h.n",
-		Args:        "aa",
+		ServiceName: reflect.ValueOf(z).Type().String(),
+		Args:        "aac",
 	}
 	encoder := gob.NewEncoder(dial)
 	err = encoder.Encode(h)
