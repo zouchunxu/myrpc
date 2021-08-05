@@ -11,14 +11,18 @@ import (
 
 type Header struct {
 	ServiceName string
-	Args        interface{}
+	Args        Zx
 }
 
 type Zcx struct {
 }
 
-func (Zcx) SayDemo(s string) int {
-	fmt.Println(s)
+type Zx struct {
+	A string
+}
+
+func (Zcx) SayDemo(s Zx) int {
+	fmt.Println(s.A)
 	return 2
 }
 
@@ -57,9 +61,12 @@ func TestConn(t *testing.T) {
 		fmt.Println(err.Error())
 		return
 	}
+	tz := Zx{
+		A: "zzz",
+	}
 	h := Header{
 		ServiceName: reflect.ValueOf(z).Type().String(),
-		Args:        "aac",
+		Args:        tz,
 	}
 	encoder := gob.NewEncoder(dial)
 	err = encoder.Encode(h)
